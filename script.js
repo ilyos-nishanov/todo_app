@@ -15,8 +15,50 @@ let currentTask = {};
 
 const addOrUpdateTask = () => {
   const dataArrIndex = taskData.findIndex((item) => item.id === currentTask.id);
-}
+  const taskObj = {
+    id: `${titleInput.value.toLowerCase().split(" ").join("-")}-${Date.now()}`,
+    title: titleInput.value,
+    date: dateInput.value,
+    description: descriptionInput.value,
+  };
 
+  if (dataArrIndex === -1) {
+    taskData.unshift(taskObj);
+  }
+  updateTaskContainer()
+  reset()
+};
+
+const updateTaskContainer = () => {
+  tasksContainer.innerHTML = "";
+
+  taskData.forEach(
+    ({ id, title, date, description }) => {
+        (tasksContainer.innerHTML += `
+        <div class="task" id="${id}">
+          <p><strong>Title:</strong> ${title}</p>
+          <p><strong>Date:</strong> ${date}</p>
+          <p><strong>Description:</strong> ${description}</p>
+          <button type="button" class="btn" onclick = "editTask(this)">Edit</button>
+          <button type="button" class="btn" onclick = "deleteTask(this)">Delete</button>
+          
+          /*To enable editing and deleting for each task, add an onclick attribute to both buttons. 
+          Set the value of the onclick attribute to editTask(this) for the Edit button and deleteTask(this) for the Delete button. 
+          The editTask(this) function will handle editing, while the deleteTask(this) function will handle deletion.
+          this is a keyword that refers to the current context. In this case, this points to the element that triggers the event – the buttons.
+          */
+
+        </div>
+      `)
+    }
+  );
+};
+
+const deleteTask = (buttonEl) => {
+    const dataArrIndex = taskData.findIndex(item => item.id === buttonEl.parentElement.id);  // remember this syntax my son
+    //Create a dataArrIndex variable and set its value using the findIndex() method on the taskData array. Pass item as the parameter 
+    //for the arrow callback function, and within the callback, check if the id of item is equal to the id of the parentElement of buttonEl.
+}
 const reset = () => {
   titleInput.value = "";
   dateInput.value = "";
@@ -31,7 +73,6 @@ openTaskFormBtn.addEventListener("click", () =>
 
 closeTaskFormBtn.addEventListener("click", () => {
   const formInputsContainValues = titleInput.value || dateInput.value || descriptionInput.value;
-
   if (formInputsContainValues) {
     confirmCloseDialog.showModal();
   } else {
@@ -49,31 +90,5 @@ discardBtn.addEventListener("click", () => {
 taskForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  
-  const taskObj = {
-    id: `${titleInput.value.toLowerCase().split(" ").join("-")}-${Date.now()}`,
-    title: titleInput.value,
-    date: dateInput.value,
-    description: descriptionInput.value,
-  };
-
-   if (dataArrIndex === -1) {
-    taskData.unshift(taskObj);
-  }
-
- taskData.forEach(
-    ({ id, title, date, description }) => {
-        (tasksContainer.innerHTML += `
-        <div class="task" id="${id}">
-          <p><strong>Title:</strong> ${title}</p>
-          <p><strong>Date:</strong> ${date}</p>
-          <p><strong>Description:</strong> ${description}</p>
-          <button type="button" class="btn">Edit</button>
-          <button type="button" class="btn">Delete</button>
-        </div>
-      `)
-    }
-  );
-
-  reset()
+  addOrUpdateTask();
 });
